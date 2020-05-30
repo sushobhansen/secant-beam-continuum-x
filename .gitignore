@@ -1,0 +1,11 @@
+build/
+dist/
+nbproject/
+benchmarks/
+.dep.inc
+Makefile
+*.mod
+*.stackdump
+*.txt
+*.zip
+*.rar
