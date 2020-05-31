@@ -22,6 +22,6 @@ amp = 10
 plt.scatter(xb,yb,color='black',label='Undeformed beam')
 plt.scatter(xi,yi,color='red',label='Undeformed element')
 plt.scatter(xb+amp*ub,yb+amp*vb,color='orange',marker='+',label='Deformed beam (10x)')
-plt.scatter(xi+amp*ui,yi+amp*vi,marker='+',color='blue',label='Deformed element(10x)')
+plt.scatter(xi+amp*ui,yi+amp*vi,marker='+',color='blue',label='Deformed element (10x)')
 plt.legend()
 plt.show()

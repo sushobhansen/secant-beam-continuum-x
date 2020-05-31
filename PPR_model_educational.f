@@ -185,6 +185,8 @@ C Secant matrix implementation
 		T_d(i,:,:) = T_dnode(:,:)
           elseif(T(2,1) .LT. 0.0D0) then
               T_d(i,:,:) = T_dnode(:,:)
+          elseif(del(2) .GT. dn) then
+              T_d(i,:,:) = 0.0D0
 	  else
               if(T(2,1) .GT. T_nmin) then
                   ratio = del(2)*T_d(i,2,2)/T(2,1)

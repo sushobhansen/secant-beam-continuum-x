@@ -50,15 +50,6 @@ C From UB, get UI and reconstruct U
           END DO
           
           WRITE(FDISPI,'(I5,*(E15.6))') TSTEP,U(:)
-          
-          DO J=1,NY+1
-              DO I=1,NX+1
-                IF((J .EQ. 1) .OR. (J .EQ. NY+1)) THEN
-                    WRITE(81,*) TSTEP,I,J,GLOBALDOFS(I,J,:),
-     & U(GLOBALDOFS(I,J,1)),U(GLOBALDOFS(I,J,2))
-                END IF
-              END DO
-          END DO
 
 C The next set of nested loops assembles the global stiffness matrix 
 C of the element (NOT of the overall problem, which the main program
@@ -116,7 +107,7 @@ C Cohesive elements
                             COHU = 0.0
                             CALL STIFFNESSMATCOHESIVE(PROPS,KCOH,
      & COORDS,1,COHU,T_de,NDOFEL)
-                            KCOH = KCOH*1.0D12
+                            KCOH = KCOH*1.0D6
                       END SELECT
                       T_d(I,:,:,:) = T_de(:,:,:)
                       CALL ASSEMBLEGLOBAL(KGLOBAL,KCOH,NDOFS,
