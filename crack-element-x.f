@@ -25,7 +25,7 @@ C Define element connectivity. Note that 1-8 are always
 C boundary DOFs. This makes static condensation much easier
           CALL ASSIGNNODEDOFS(GLOBALDOFS,NX,NY)
           CALL ASSIGNELEMENTDOFS(ELEMENTDOFS,GLOBALDOFS,NX,NY)
-          CALL CONNECTIONMAT(NX,NBDOFS,AX,BX,AY,BY,SMAT,TMAT)
+          CALL INTERPMAT(NX,NBDOFS,AX,BX,AY,BY,SMAT,TMAT)
           
 
 C Enumerate boundary and internal DOFs
