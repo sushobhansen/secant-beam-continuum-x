@@ -13,7 +13,7 @@
           DOUBLE PRECISION :: PROPS(9),KCOMPBEAM(6,6),KBEAM(6,6)
           DOUBLE PRECISION, ALLOCATABLE :: KGLOBAL(:,:),INVKII(:,:,:),
      & INVKIIE(:,:),KIB(:,:,:),KIBE(:,:)
-          CHARACTER(LEN=200) :: FINPUT
+          CHARACTER(LEN=200) :: FINPUT,FOUTPUT
           LOGICAL :: FULLINT
           
           INTEGER :: NCONSTRAINED,NKNOWN,NFREE,II
@@ -72,9 +72,12 @@
           KIBE = 0.0D0
           T_d = 0.0D0
           
-          OPEN(UNIT=FDISPB,FILE='boundary-displacements.txt') 
-          OPEN(UNIT=FDISPI,FILE='internal-displacements.txt')
-          OPEN(UNIT=FSEP,FILE='separation.txt') 
+          FOUTPUT = TRIM(FINPUT)//'_boundary-disp.txt'
+          OPEN(UNIT=FDISPB,FILE=FOUTPUT) 
+          FOUTPUT = TRIM(FINPUT)//'_internal-disp.txt'
+          OPEN(UNIT=FDISPI,FILE=FOUTPUT)
+          FOUTPUT = TRIM(FINPUT)//'_separation.txt'
+          OPEN(UNIT=FSEP,FILE=FOUTPUT) 
           
           DO TSTEP=1,NSTEPS
               KGLOBAL = 0.0D0
@@ -137,9 +140,9 @@ C Elastic
           CLOSE(FDISPI)
           CLOSE(FSEP) 
           
-          CALL WRITEEXTERNALMESH(NELEM,AX,BX,AY,BY)
+          CALL WRITEEXTERNALMESH(NELEM,AX,BX,AY,BY,FINPUT)
           CALL WRITEINTERNALMESH(NIX,NIY,AX(2),BX(2),BY(1),
-     & SUM(BY(1:2)))
+     & SUM(BY(1:2)),FINPUT)
           
       
       END PROGRAM MAIN

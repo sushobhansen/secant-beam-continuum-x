@@ -385,12 +385,14 @@ C Partition K into Kbb,Kbi,Kib,Kii
           RETURN
       END SUBROUTINE CONDENSEDMAT
       
-      SUBROUTINE WRITEEXTERNALMESH(NELEM,AX,BX,AY,BY)
+      SUBROUTINE WRITEEXTERNALMESH(NELEM,AX,BX,AY,BY,FINPUT)
           INTEGER :: NELEM
           DOUBLE PRECISION :: AX(NELEM),BX(NELEM),AY(NELEM),
      & BY(NELEM)
+          CHARACTER(LEN=200) :: FINPUT,FOUTPUT
           
-          OPEN(UNIT=20,FILE='extmesh.txt')
+          FOUTPUT = TRIM(FINPUT)//'_extmesh.txt'
+          OPEN(UNIT=20,FILE=FOUTPUT)
           
           WRITE(20,*) AX(2)+(BX(2)-AX(2))/2,AY(1)
           WRITE(20,*) AX(2)+(BX(2)-AX(2))/2,BY(1)
@@ -401,11 +403,13 @@ C Partition K into Kbb,Kbi,Kib,Kii
           
       END SUBROUTINE WRITEEXTERNALMESH
       
-      SUBROUTINE WRITEINTERNALMESH(NX,NY,AX,BX,AY,BY)
+      SUBROUTINE WRITEINTERNALMESH(NX,NY,AX,BX,AY,BY,FINPUT)
           INTEGER :: NX,NY
           DOUBLE PRECISION :: AX,BX,AY,BY
+          CHARACTER(LEN=200) :: FINPUT,FOUTPUT
           
-          OPEN(UNIT=20,FILE='intmesh.txt')
+          FOUTPUT = TRIM(FINPUT)//'_intmesh.txt'
+          OPEN(UNIT=20,FILE=FOUTPUT)
           
           DO J=1,(NY+1)/2
               DO I=1,(NX+1)

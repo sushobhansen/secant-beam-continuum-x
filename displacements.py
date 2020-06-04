@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-xb,yb = np.loadtxt('extmesh.txt',unpack=True)
-dispb = np.loadtxt('boundary-displacements.txt')
-xi,yi = np.loadtxt('intmesh.txt',unpack=True)
-dispi = np.loadtxt('internal-displacements.txt')
+xb,yb = np.loadtxt('input.inp_extmesh.txt',unpack=True)
+dispb = np.loadtxt('input.inp_boundary-disp.txt')
+xi,yi = np.loadtxt('input.inp_intmesh.txt',unpack=True)
+dispi = np.loadtxt('input.inp_internal-disp.txt')
 
 
 dispb = dispb[len(dispb)-2] #One time step earlier than final one to sync with dispi

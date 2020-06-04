@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-t,row,col,dt1,dn1,dt2,dn2 = np.loadtxt('separation.txt',unpack=True)
+t,row,col,dt1,dn1,dt2,dn2 = np.loadtxt('input.inp_separation.txt',unpack=True)
 
 nsteps = t[len(t)-1]
 nsteps = int(nsteps)
