@@ -4,7 +4,7 @@
           
           INTEGER :: NELEM=3,NIX,NIY,DBCOH,NDOFS,NCOMPDOFS,
      & NBCOMPDOFS,NICOMPDOFS,FSEP=11,FDISPB=12,FDISPI=13,
-     & TSTEP,NSTEPS
+     & FFORCE=14,TSTEP,NSTEPS
           INTEGER :: LOCALDOFS(6)
           INTEGER, ALLOCATABLE :: ELEMENTDOFS(:,:),
      & ELEMENTTYPE(:)
@@ -22,7 +22,7 @@
           DOUBLE PRECISION :: UB(6),UKNOWN(100)
           DOUBLE PRECISION, ALLOCATABLE :: UFREE(:),U(:),
      & DUFREE(:),KFF(:,:),KFK(:,:),UI(:,:),UIE(:),
-     & T_d(:,:,:,:)      
+     & T_d(:,:,:,:),FGLOBAL(:)      
 
           ALLOCATE(ELEMENTTYPE(NELEM))
           CALL GETARG(1,FINPUT)
@@ -49,7 +49,7 @@
 
 
           ALLOCATE(FREEDOFS(NFREE),UFREE(NFREE),DUFREE(NFREE),
-     & KFF(NFREE,NFREE),KFK(NFREE,NKNOWN))
+     & KFF(NFREE,NFREE),KFK(NFREE,NKNOWN),FGLOBAL(NDOFS))
           II = 1
           DO I=1,NDOFS
             IF(ALL(CONSTRAINTS(1:NCONSTRAINED) .NE. I) .AND. 
@@ -64,6 +64,7 @@
           U = 0.0D0
           UB =0.0D0
           UFREE = 0.0D0
+          FGLOBAL = 0.0D0
           KBEAM = 0.0D0
           KCOMPBEAM = 0.0D0
           INVKII = 0.0D0
@@ -78,6 +79,8 @@
           OPEN(UNIT=FDISPI,FILE=FOUTPUT)
           FOUTPUT = TRIM(FINPUT)//'_separation.txt'
           OPEN(UNIT=FSEP,FILE=FOUTPUT) 
+          FOUTPUT = TRIM(FINPUT)//'_boundary-force.txt'
+          OPEN(UNIT=FFORCE,FILE=FOUTPUT)
           
           DO TSTEP=1,NSTEPS
               KGLOBAL = 0.0D0
@@ -133,7 +136,10 @@ C Elastic
                 U(FREEDOFS(I))=UFREE(I)
             END DO
             
+            FGLOBAL = MATMUL(KGLOBAL,U)
+            
             WRITE(FDISPB,'(I5,*(E15.6))') TSTEP,U
+            WRITE(FFORCE,'(I5,*(E15.6))') TSTEP,FGLOBAL
           END DO
           
           CLOSE(FDISPB)
