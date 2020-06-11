@@ -205,7 +205,7 @@ C Secant matrix implementation
  
 C          T_d(i,:,:) = T_dnode(:,:)
 
-C	  WRITE(80,*) KSTEP,i,del(2),T(2,1),T_d(i,2,2)
+	  WRITE(80,*) KSTEP,i,del(2),T(2,1),T_d(i,2,2)
      
           ShapeN(1) = -N1
           ShapeN(2) = -N2

@@ -22,6 +22,8 @@ for i in range(nsteps):
 		else:
 			dn[i,j] = dn1[(nx-1)*i+j]
 
+np.savetxt('sep_points.txt',dn)
+
 plt.plot(T,dn[:,nx-1],label='x = 150 mm')
 plt.plot(T,dn_max,label='Max Separation')
 plt.xlabel('Time')
