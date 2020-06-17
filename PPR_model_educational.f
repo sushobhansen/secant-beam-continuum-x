@@ -181,13 +181,15 @@ c Numerical integration to compute RHS and AMATRX
      &  m, n, dn, dt, dGtn, dGnt, del, deln_max, delt_max)
 
 C Secant matrix implementation
-	  if(KSTEP .EQ. 1) then
+C Normal interaction
+	  if(KSTEP .EQ. 1) then !Initial slope
 		T_d(i,:,:) = T_dnode(:,:)
-          elseif(T(2,1) .LT. 0.0D0) then
+          elseif(T(2,1) .LT. 0.0D0) then !Contact
               T_d(i,:,:) = T_dnode(:,:)
-          elseif(del(2) .GT. dn) then
-              T_d(i,:,:) = 0.0D0
-	  else
+          elseif((del(2) .GE. dn) .OR. 
+     & (abs(del(1)) .GE. dt)) then !Complete failure
+              T_d(i,2,:) = 0.0D0
+          else !Softening
               if(T(2,1) .GT. T_nmin) then
                   ratio = del(2)*T_d(i,2,2)/T(2,1)
               else
@@ -197,15 +199,40 @@ C Secant matrix implementation
               if(ratio .LT. 1.0D0) then
                   ratio2 = 1.0D0
               else
-                  ratio2 = ratioMin
+                  ratio2 = MAX(1.0D0/ratio,ratioMin)
               end if
               
-              T_d(i,:,:) = T_d(i,:,:)*ratio2
+              T_d(i,2,:) = T_d(i,2,:)*ratio2
 	  end if
+          
+C Tangential interaction
+          if(KSTEP .EQ. 1) then !Initial slope
+              T_d(i,:,:) = T_dnode(:,:)
+          elseif((del(2) .GE. dn) .OR. 
+     & (abs(del(1)) .GE. dt)) then !Complete failure
+              T_d(i,1,:) = 0.0D0
+          else !Softening
+            if(T(1,1) .GT. T_nmin) then
+                  ratio = abs(del(1))*T_d(i,1,1)/T(1,1)
+              else
+                  ratio = 0.0D0
+              end if
+              
+              if(ratio .LT. 1.0D0) then
+                  ratio2 = 1.0D0
+              else
+                  ratio2 = MAX(1.0D0/ratio,ratioMin)
+              end if
+              
+              T_d(i,1,:) = T_d(i,1,:)*ratio2
+	  end if              
  
 C          T_d(i,:,:) = T_dnode(:,:)
 
-	  WRITE(80,*) KSTEP,i,del(2),T(2,1),T_d(i,2,2)
+	  WRITE(80,*) KSTEP,i,del(1),del(2),T(1,1),T(2,1)
+          do j=1,2
+              WRITE(80,*) T_d(i,j,:)
+          end do
      
           ShapeN(1) = -N1
           ShapeN(2) = -N2
