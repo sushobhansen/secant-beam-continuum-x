@@ -43,8 +43,9 @@ c =======================================================================
      & PROPS, NPROPS, COORDS, MCRD, NNODE, U, DU, V, A, JTYPE, TIME,
      & DTIME, KSTEP, KINC, JELEM, PARAMS, NDLOAD, JDLTYP, ADLMAG,
      & PREDEF, NPREDF, LFLAGS, MLVARX, DDLMAG, MDLOAD, PNEWDT, JPROPS,
-     & NJPRO, PERIOD, T_d)
+     & NJPRO, PERIOD, T_d, MODELTYPE)
        INCLUDE 'ABA_PARAM.INC'
+       INTEGER MODELTYPE
        DIMENSION RHS(MLVARX,*), AMATRX(NDOFEL,NDOFEL), PROPS(*),
      & SVARS(*), ENERGY(8), COORDS(MCRD, NNODE), U(NDOFEL),
      & DU(MLVARX,*), V(NDOFEL), A(NDOFEL), TIME(2), PARAMS(*),
@@ -177,8 +178,14 @@ c Numerical integration to compute RHS and AMATRX
           del(2) = N1*del2 + N2*del4
           delt_max = SVARS(n_GP*(i-1)+1)
           deln_max = SVARS(n_GP*(i-1)+2)
+          
+          IF(MODELTYPE .EQ. 1) THEN
           call k_Cohesive_PPR (T, T_dnode, Gam_n, Gam_t, alph, beta, 
      &  m, n, dn, dt, dGtn, dGnt, del, deln_max, delt_max)
+          ELSE
+              call k_Bilinear_Coh(T,T_dnode,Gn,Gt,Tn_m,Tt_m,
+     & dn, dt, del)
+          END IF
 
 C Secant matrix implementation
 C Normal interaction
@@ -485,3 +492,50 @@ c
        RETURN
        END
 c =====================================================================
+c ======Bilinear model=================================================
+
+      SUBROUTINE k_Bilinear_Coh(T,T_d,Gn,Gt,Tn_m,Tt_m,
+     & dn, dt, del)
+          INCLUDE 'ABA_PARAM.INC'
+       DIMENSION T(2,1), T_d(2,2), del(2), T_dp(2,1)
+       DOUBLE PRECISION Gn, Gt, Tn_m, Tt_m, dn, dt
+       DOUBLE PRECISION  delt, deln, psi, dn1, dncr
+       delt = abs(del(1))
+       deln = del(2)
+       T_dp(1,1) = 1.0D8 !Penalty stiffness
+       T_dp(2,1) = 1.0D8 !Penalty stiffness
+       psi = 0.25 !Psi parameter
+       dn1 = ((2*Gn/Tn_m)-psi*dn)/(1-psi) !w1 parameter
+       dncr = Tn_m/T_dp(2,1)
+       
+C Normal interaction 
+       if(deln .LE. 0.0D0) then !Contact
+        T(2,1) = T_dp(2,1)*deln
+        T_d(2,2) = T_dp(2,1)
+        T_d(2,1) = 0.0D0
+       elseif((deln .GE. dn) .OR. (delt .GE. dt)) then !Complete failure
+        T(2,1) = 0.0D0
+        T_d(2,2) = 0.0D0
+        T_d(2,1) = 0.0D0
+       else !Softening
+           if(deln .LE. dncr) then !Elastic region
+            T(2,1) = T_dp(2,1)*deln
+            T_d(2,2) = T_dp(2,1)
+            T_d(2,1) = 0.0D0
+           elseif(deln .LE. dn1) then !Between peak and first kink
+               T(2,1) = Tn_m + ( (psi*Tn_m-Tn_m)/(dn1-dncr) ) *
+     & (deln-dncr)
+            T_d(2,2) = (psi*Tn_m-Tn_m)/(dn1-dncr)
+            T_d(2,1) = 0.0D0
+           else !Between first kink and failure
+               T(2,1) = (psi*Tn_m/(dn-dn1))*(dn-deln)
+               T_d(2,2) = -psi*Tn_m/(dn-dn1)
+               T_d(2,1) = 0.0D0
+           end if
+       end if
+       
+C Tangential interaction - rigid
+              T(1,1) = T_dp(1,1)*delt
+              T_d(1,1) = T_dp(1,1)
+              T_d(1,2) = 0.0D0
+      END SUBROUTINE k_Bilinear_Coh

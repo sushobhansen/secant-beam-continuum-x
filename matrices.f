@@ -278,7 +278,7 @@ C FGPSEP, FGPTRAC - unit handles for writing separation and traction to files
 C KSTEP - time step, not used by the model but only for controlling writing
           INCLUDE 'ABA_PARAM.INC'
           
-          INTEGER :: NDOFEL,KSTEP
+          INTEGER :: NDOFEL,KSTEP,MODELTYPE
           INTEGER :: NRHS=1, MCRD=2, NNODE=4, MLVARX=8, NPREDF=8,
      & MDLOAD=8
           DOUBLE PRECISION :: AMATRX(NDOFEL,NDOFEL), COORDS(2,4),
@@ -312,11 +312,14 @@ C Returns RHS vector (of internal forces: not used in this code)
 C Returns AMATRX - local cohesive stiffness matrix
 C Uses COORDS and U to determine separation, from where traction
 C and stiffness are calculated
+          
+C Model type = 1 (PPR), 2 (bilinear)
+          MODELTYPE = 1
           CALL UEL(RHS, AMATRX, SVARS, ENERGY, NDOFEL, NRHS, NSVARS,
      & PROPS, NPROPS, COORDS, MCRD, NNODE, U, DU, V, A, JTYPE, TIME,
      & DTIME, KSTEP, KINC, JELEM, PARAMS, NDLOAD, JDLTYP, ADLMAG,
      & PREDEF, NPREDF, LFLAGS, MLVARX, DDLMAG, MDLOAD, PNEWDT, JPROPS,
-     & NJPRO, PERIOD, T_d)
+     & NJPRO, PERIOD, T_d, MODELTYPE)
       
           DEALLOCATE(RHS, SVARS, ENERGY, DU, V, A, TIME, PARAMS,
      & JDLTYP, ADLMAG, DDLMAG, PREDEF, LFLAGS, JPROPS)
