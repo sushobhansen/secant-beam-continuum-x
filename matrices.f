@@ -314,7 +314,7 @@ C Uses COORDS and U to determine separation, from where traction
 C and stiffness are calculated
           
 C Model type = 1 (PPR), 2 (bilinear)
-          MODELTYPE = 1
+          MODELTYPE = 2
           CALL UEL(RHS, AMATRX, SVARS, ENERGY, NDOFEL, NRHS, NSVARS,
      & PROPS, NPROPS, COORDS, MCRD, NNODE, U, DU, V, A, JTYPE, TIME,
      & DTIME, KSTEP, KINC, JELEM, PARAMS, NDLOAD, JDLTYP, ADLMAG,

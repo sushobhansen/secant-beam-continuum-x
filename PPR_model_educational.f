@@ -124,7 +124,7 @@ c Read input data & Initialize
        lt   = PROPS(8)
        th   = PROPS(9)
        n_GP = 2
-       ratioMin = 0.99D0
+       ratioMin = 0.95D0
        T_nmin = 1.0D-10
        data GP   / 0.577350269189626 , -0.577350269189626 /
        data GP_W / 1.0 , 1.0 /
