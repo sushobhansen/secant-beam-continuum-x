@@ -83,6 +83,8 @@
           OPEN(UNIT=FFORCE,FILE=FOUTPUT)
           
           DO TSTEP=1,NSTEPS
+              !Add loop here
+              !ICHANGE=0
               KGLOBAL = 0.0D0
               PRINT*, 'TIME STEP ',TSTEP,' OF ',NSTEPS
           DO I=1,NELEM
@@ -111,7 +113,7 @@ C Elastic
      & LOCALDOFS)  
                 END IF
           END DO
-          
+          !Check if there were changes, break loop
           DO I=1,NFREE
                 DO J=1,NKNOWN
                     KFK(I,J)=KGLOBAL(FREEDOFS(I),KNOWNDOFS(J))
@@ -140,6 +142,7 @@ C Elastic
             
             WRITE(FDISPB,'(I5,*(E15.6))') TSTEP,U
             WRITE(FFORCE,'(I5,*(E15.6))') TSTEP,FGLOBAL
+            !151 Continue
           END DO
           
           CLOSE(FDISPB)

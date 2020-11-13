@@ -197,19 +197,19 @@ C Normal interaction
      & (abs(del(1)) .GE. dt)) then !Complete failure
               T_d(i,2,:) = 0.0D0
           else !Softening
+              !ICHANGE=1
               if(T(2,1) .GT. T_nmin) then
                   ratio = del(2)*T_d(i,2,2)/T(2,1)
               else
                   ratio = 0.0D0
               end if
               
-              if(ratio .LT. 1.0D0) then
-                  ratio2 = 1.0D0
-              else
-                  ratio2 = MAX(1.0D0/ratio,ratioMin)
+              if(ratio .GT. 1.0D0) then
+                do while(ratio .GT. ratioMin)
+                    T_d(i,2,:) = T_d(i,2,:)*ratioMin
+                    ratio = del(2)*T_d(i,2,2)/T(2,1)
+                end do
               end if
-              
-              T_d(i,2,:) = T_d(i,2,:)*ratio2
 	  end if
           
 C Tangential interaction
@@ -225,13 +225,12 @@ C Tangential interaction
                   ratio = 0.0D0
               end if
               
-              if(ratio .LT. 1.0D0) then
-                  ratio2 = 1.0D0
-              else
-                  ratio2 = MAX(1.0D0/ratio,ratioMin)
+              if(ratio .GT. 1.0D0) then
+                do while(ratio .GT. ratioMin)
+                    T_d(i,1,:) = T_d(i,1,:)*ratioMin
+                    ratio = abs(del(1))*T_d(i,1,1)/T(1,1)
+                end do
               end if
-              
-              T_d(i,1,:) = T_d(i,1,:)*ratio2
 	  end if              
  
 C          T_d(i,:,:) = T_dnode(:,:)
@@ -504,7 +503,7 @@ c ======Bilinear model=================================================
        deln = del(2)
        T_dp(1,1) = 1.0D8 !Penalty stiffness
        T_dp(2,1) = 1.0D8 !Penalty stiffness
-       psi = 0.25 !Psi parameter
+       psi = 0.30 !Psi parameter
        dn1 = ((2*Gn/Tn_m)-psi*dn)/(1-psi) !w1 parameter
        dncr = Tn_m/T_dp(2,1)
        

@@ -73,6 +73,17 @@
               
           END FUNCTION INVERSEMAT
           
+          FUNCTION DIRACDELTA(X) RESULT(Y)
+              DOUBLE PRECISION, INTENT(IN) :: X
+              DOUBLE PRECISION :: Y
+              
+              IF(X .EQ. 0.0D0) THEN
+                  Y = 1.0D0
+              ELSE
+                  Y = 0.0D0
+              END IF
+          END FUNCTION DIRACDELTA
+          
       END MODULE MATRIXFUNCTIONS
       
       SUBROUTINE READINPUT(NSTEPS,NELEM,NIX,NIY,DBCOH,ELEMENTTYPE,

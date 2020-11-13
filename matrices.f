@@ -1,5 +1,6 @@
       SUBROUTINE INTERPMAT(NX,NBDOFS,AX,BX,AY,BY,SMAT,TMAT)
           
+          USE MATRIXFUNCTIONS
           INCLUDE 'ABA_PARAM.INC'
           
           INTEGER :: NX,NBDOFS
@@ -15,9 +16,11 @@
 C Lower edge
               X = AX+(BX-AX)*(I-1)/NX
               SMAT(2*I-1,1) = 1.0D0
+C              SMAT(2*I-1,1) = DIRACDELTA(XMID-X)
               SMAT(2*I,2:3) = (/1.0D0,XMID-X/)
 C Upper edge
               SMAT(2*I+2*NX+1,4) = 1.0D0
+C              SMAT(2*I+2*NX+1,4) = DIRACDELTA(XMID-X)
               SMAT(2*I+2*NX+2,5:6) = (/1.0D0,XMID-X/)
           END DO
           
